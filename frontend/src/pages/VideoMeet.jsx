@@ -91,10 +91,21 @@ export default function VideoMeetComponent() {
     localVideoref.current.srcObject = stream;
 
     for (let id in connections) {
-      if (id === socketIdRef.current) continue;
-      connections[id].addStream(stream);
+        if (id === socketIdRef.current) continue;
+
+        const senders = connections[id].getSenders();
+        stream.getTracks().forEach(track => {
+            const sender = senders.find(s => s.track && s.track.kind === track.kind);
+            if (sender) {
+                // Swap the track if the sender already exists
+                sender.replaceTrack(track);
+            } else {
+                // Only add if it's the first time
+                connections[id].addTrack(track, stream);
+            }
+        });
     }
-  }, []);
+}, []);
 
   const getUserMedia = useCallback(() => {
     if ((video && videoAvailable) || (audio && audioAvailable)) {
@@ -109,26 +120,60 @@ export default function VideoMeetComponent() {
     getUserMedia();
   }, [getUserMedia]);
 
+  /* -------------------- SIGNALING HANDLER -------------------- */
+
+  // This handles the incoming "handshake" messages (SDP and ICE) from other users
+  const gotMessageFromServer = useCallback((fromId, message) => {
+    var signal = JSON.parse(message);
+
+    if (fromId !== socketIdRef.current) {
+      if (signal.sdp) {
+        connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
+          if (signal.sdp.type === 'offer') {
+            connections[fromId].createAnswer().then((description) => {
+              connections[fromId].setLocalDescription(description).then(() => {
+                socketRef.current.emit('signal', fromId, JSON.stringify({ 'sdp': connections[fromId].localDescription }));
+              }).catch(e => console.log(e));
+            }).catch(e => console.log(e));
+          }
+        }).catch(e => console.log(e));
+      }
+
+      if (signal.ice) {
+        connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e => console.log(e));
+      }
+    }
+  }, []);
+
   /* -------------------- SCREEN SHARE -------------------- */
 
   const getDisplayMedia = useCallback(() => {
     navigator.mediaDevices
-      .getDisplayMedia({ video: true })
-      .then((stream) => {
-        window.localStream = stream;
-        localVideoref.current.srcObject = stream;
+        .getDisplayMedia({ video: true })
+        .then((stream) => {
+            const screenTrack = stream.getVideoTracks()[0];
+            
+            // Update local view
+            localVideoref.current.srcObject = stream;
 
-        for (let id in connections) {
-          if (id === socketIdRef.current) continue;
-          connections[id].addStream(stream);
-        }
+            // CRITICAL: Swap tracks for all existing peers without renegotiating
+            for (let id in connections) {
+                const senders = connections[id].getSenders();
+                const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+                if (videoSender) {
+                    videoSender.replaceTrack(screenTrack);
+                }
+            }
 
-        stream.getTracks()[0].onended = () => {
-          setScreen(false);
-        };
-      })
-      .catch((e) => console.log(e));
-  }, []);
+            // Handle when user clicks "Stop Sharing" button in browser UI
+            screenTrack.onended = () => {
+                setScreen(false);
+                // Switch back to webcam
+                getUserMedia(); 
+            };
+        })
+        .catch((e) => console.log(e));
+}, [getUserMedia]);
 
   useEffect(() => {
     if (screen) {
@@ -141,6 +186,9 @@ export default function VideoMeetComponent() {
   const connectToSocketServer = useCallback(() => {
     socketRef.current = io.connect(server);
 
+    // ADDED: Listen for signaling events from the server
+    socketRef.current.on('signal', gotMessageFromServer);
+
     socketRef.current.on("connect", () => {
       socketIdRef.current = socketRef.current.id;
       socketRef.current.emit("join-call", window.location.href);
@@ -152,6 +200,13 @@ export default function VideoMeetComponent() {
           connections[clientId] = new RTCPeerConnection(
             peerConfigConnections
           );
+
+          // ADDED: Exchange network information (ICE Candidates)
+          connections[clientId].onicecandidate = (event) => {
+            if (event.candidate != null) {
+              socketRef.current.emit('signal', clientId, JSON.stringify({ 'ice': event.candidate }));
+            }
+          };
 
           connections[clientId].onaddstream = (event) => {
             setVideos((prev) => {
@@ -167,7 +222,24 @@ export default function VideoMeetComponent() {
           if (window.localStream) {
             connections[clientId].addStream(window.localStream);
           }
+
+          // ADDED: If we are the newly joined user, initiate offers to everyone else
+          if (id === socketIdRef.current) {
+            for (let id2 in connections) {
+              if (id2 === socketIdRef.current) continue;
+              connections[id2].createOffer().then((description) => {
+                connections[id2].setLocalDescription(description).then(() => {
+                  socketRef.current.emit('signal', id2, JSON.stringify({ 'sdp': connections[id2].localDescription }));
+                });
+              });
+            }
+          }
         });
+      });
+
+      // Handle user leaving to clean up UI
+      socketRef.current.on('user-left', (id) => {
+        setVideos((prev) => prev.filter((v) => v.socketId !== id));
       });
 
       socketRef.current.on("chat-message", (msg, sender, senderId) => {
@@ -177,7 +249,7 @@ export default function VideoMeetComponent() {
         }
       });
     });
-  }, []);
+  }, [gotMessageFromServer]);
 
   /* -------------------- ACTIONS -------------------- */
 
@@ -232,6 +304,7 @@ export default function VideoMeetComponent() {
                   ref={(ref) => ref && (ref.srcObject = v.stream)}
                   autoPlay
                   className={styles.remoteVideo}
+                  style={{ objectFit: screen ? 'contain' : 'cover' }} // Optional: Dynamic fit
                 />
               ))}
             </div>
