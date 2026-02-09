@@ -34,7 +34,7 @@ function HomeComponent() {
     <ThemeProvider theme={darkTheme}>
       {/* NAVBAR */}
       <div className="navBar">
-        <h2 style={{ fontWeight: 800 }}>📹 Apna Video Call</h2>
+        <h2 style={{ fontWeight: 800 }}>Conectify</h2>
 
         <div className="navActions">
           <IconButton onClick={() => navigate("/history")}>
@@ -65,8 +65,7 @@ function HomeComponent() {
           </h1>
 
           <p className="heroSubtitle">
-            Connect, collaborate and celebrate from anywhere with Apna Video
-            Call
+            Connect, collaborate and celebrate from anywhere with Conectify
           </p>
 
           <div className="heroActions">

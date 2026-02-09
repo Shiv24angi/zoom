@@ -26,7 +26,7 @@ export default function LandingPage() {
     <div className="landingPageContainer">
       {/* NAVBAR */}
       <nav className="navbar">
-        <h2 className="brandName">Apna Video Call</h2>
+        <h2 className="brandName">Conectify</h2>
 
         <div className="navlist">
           <button className="textBtn" onClick={() => navigate("/aljk23")}>
@@ -69,7 +69,7 @@ export default function LandingPage() {
       {/* FEATURES */}
       <section className="featuresSection">
         <div className="sectionInner">
-          <h2 className="sectionTitle reveal">Why choose Apna Video Call?</h2>
+          <h2 className="sectionTitle reveal">Why choose Conectify?</h2>
 
           <div className="featuresGrid">
             <div className="featureCard reveal">
@@ -175,7 +175,7 @@ export default function LandingPage() {
       <footer className="footer">
         <div className="footerInner">
           <div>
-            <h3>Apna Video Call</h3>
+            <h3>Conectify</h3>
             <p>Simple, secure, and reliable communication.</p>
           </div>
 
@@ -201,7 +201,7 @@ export default function LandingPage() {
         </div>
 
         <div className="footerBottom">
-          © {new Date().getFullYear()} Apna Video Call. All rights reserved.
+          © {new Date().getFullYear()} Conectify. All rights reserved.
         </div>
       </footer>
     </div>
