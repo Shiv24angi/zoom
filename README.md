@@ -1,6 +1,3 @@
-
-
-```markdown
 # Connectify 🚀
 
 **Connectify** is a professional, full-stack video conferencing web application designed for high-quality, real-time communication. It features a modern interface built with React and Material UI, supported by a robust Node.js backend to handle secure authentication and live data streaming.
