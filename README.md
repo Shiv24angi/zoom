@@ -1,89 +1,99 @@
-#Zoom - Video Conferencing Application - Connectify
-A full-stack video conferencing web application designed for real-time communication. This project provides a professional interface for users to join and host video meetings with integrated authentication and meeting history features.
 
-#Features
-Real-Time Video Meetings: High-quality video and audio communication powered by Socket.io.
 
-User Authentication: Secure user registration and login system.
+```markdown
+# Connectify 🚀
 
-Meeting History: Track and view past meeting logs.
+**Connectify** is a professional, full-stack video conferencing web application designed for high-quality, real-time communication. It features a modern interface built with React and Material UI, supported by a robust Node.js backend to handle secure authentication and live data streaming.
 
-Responsive Design: A modern, professional landing page and dashboard built with Material UI.
+---
 
-Secure Backend: Robust server-side logic using Node.js, Express, and MongoDB.
+## ✨ Features
 
-#Tech Stack
-Frontend
-React.js: Library for building the user interface.
+* **Real-Time Video Meetings**: High-quality video and audio communication powered by **Socket.io**.
+* **User Authentication**: Secure registration and login system using **Bcrypt** for password hashing.
+* **Meeting History**: Users can easily track and view logs of their past meetings.
+* **Modern Responsive UI**: A sleek landing page and dashboard built using **Material UI** and **Emotion** for a seamless experience across devices.
+* **Scalable Backend**: Robust server-side logic using **Express** and **MongoDB**.
 
-Material UI & Emotion: For professional styling and icon components.
+---
 
-React Router: For seamless client-side navigation.
+## 🛠️ Tech Stack
 
-Socket.io-client: Real-time communication on the client side.
+### Frontend
+* **React.js**: For building a dynamic and responsive UI.
+* **Material UI & Emotion**: For professional-grade styling and components.
+* **React Router**: Handling client-side navigation.
+* **Socket.io-client**: Real-time communication on the frontend.
+* **Axios**: For managing API requests to the server.
 
-Axios: For making HTTP requests to the backend.
+### Backend
+* **Node.js & Express**: Core server-side framework.
+* **MongoDB & Mongoose**: Database and object modeling for users and meeting data.
+* **Socket.io**: Bidirectional, real-time communication.
+* **Bcrypt**: Securing user data with industrial-standard hashing.
+* **Dotenv**: Management of environment variables.
 
-Backend
-Node.js & Express: Server-side framework.
+---
 
-MongoDB & Mongoose: Database and object modeling for user and meeting data.
+## 📥 Installation and Setup
 
-Socket.io: Enables real-time, bidirectional communication between web clients and the server.
+### Prerequisites
+* **Node.js** (v16+ recommended)
+* **MongoDB Atlas** account or a local MongoDB instance
 
-Bcrypt: For secure password hashing.
-
-Dotenv: Environment variable management.
-
-#Installation and Setup
-Prerequisites
-Node.js (v16+ recommended)
-
-MongoDB Atlas account or local MongoDB instance
-
-Backend Setup
-Navigate to the backend directory:
-
-Bash
+### 1. Backend Setup
+```bash
+# Navigate to the backend directory
 cd backend
-Install dependencies:
 
-Bash
+# Install dependencies
 npm install
-Configure environment variables:
 
-Create a .env file in the backend root.
+# Configure environment variables
+# Create a .env file in the backend root and add:
+# MONGO_URL=your_mongodb_connection_string
 
-Add your MongoDB URI: MONGO_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/.
-
-Start the server:
-
-Bash
+# Start the server for development
 npm run dev
-Frontend Setup
-Navigate to the frontend directory:
 
-Bash
+```
+
+### 2. Frontend Setup
+
+```bash
+# Navigate to the frontend directory
 cd frontend
-Install dependencies:
 
-Bash
+# Install dependencies
 npm install
-Start the React application:
 
-Bash
+# Start the React application
 npm start
-📜 Available Scripts
-Backend
-npm run dev: Starts the server with nodemon for development.
 
-npm start: Runs the server using standard node.
+```
 
-npm run prod: Runs the server using pm2 for production environments.
+---
 
-Frontend
-npm start: Runs the app in development mode.
+## 📜 Available Scripts
 
-npm run build: Builds the app for production to the build folder.
+### Backend
 
-Author: Shivangi
+* `npm run dev`: Starts the server with `nodemon` for automatic restarts during development.
+* `npm start`: Runs the server using standard `node`.
+* `npm run prod`: Runs the server using `pm2` for production environments.
+
+### Frontend
+
+* `npm start`: Runs the app in development mode at `http://localhost:3000`.
+* `npm run build`: Compiles the application for production into the `build` folder.
+
+---
+
+## 👤 Author
+
+**Shivangi**
+
+* GitHub: [@shiv24angi](https://www.google.com/search?q=https://github.com/shiv24angi)
+
+---
+
